@@ -1,0 +1,1944 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyNest 🎓 — Your Vibe, Your Study Space</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ VARIABLES ═══════════════════════════════════════════ */
+:root {
+  --bg:        #f5f0ff;
+  --bg2:       #eee8ff;
+  --surface:   #ffffff;
+  --surface2:  #faf8ff;
+  --border:    #e2d9f3;
+  --text:      #1a1030;
+  --text-muted:#7c6fa0;
+  --a1: #6c47ff;  /* violet */
+  --a2: #ff4d8d;  /* hot pink */
+  --a3: #00c9a7;  /* mint */
+  --a4: #ffb547;  /* amber */
+  --a5: #4dc8ff;  /* sky */
+  --danger:#ff3b5c;
+  --r:18px; --r-sm:10px;
+  --nav-h:68px;
+  --tr:0.22s cubic-bezier(0.34,1.56,0.64,1);
+  --tr-fast:0.15s ease;
+  --shadow: 0 4px 24px rgba(108,71,255,0.10), 0 1px 4px rgba(0,0,0,0.06);
+  --shadow-hover: 0 12px 48px rgba(108,71,255,0.22), 0 2px 8px rgba(0,0,0,0.08);
+  --glow: 0 0 32px rgba(108,71,255,0.25);
+}
+[data-theme="dark"] {
+  --bg:        #0e0b1a;
+  --bg2:       #150f28;
+  --surface:   #1c1630;
+  --surface2:  #231d3a;
+  --border:    #2e2650;
+  --text:      #f0ebff;
+  --text-muted:#9b8ec4;
+  --shadow: 0 4px 24px rgba(0,0,0,0.5), 0 1px 4px rgba(0,0,0,0.3);
+  --shadow-hover: 0 12px 48px rgba(108,71,255,0.4);
+}
+
+/* ═══ RESET ═══════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Space Grotesk',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+  transition:background .3s,color .3s;
+}
+h1,h2,h3,h4{font-family:'Nunito',sans-serif}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font-family:inherit;border:none;background:none}
+input,select,textarea{font-family:inherit}
+
+/* ═══ ANIMATED BG DOTS ════════════════════════════════════ */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image: radial-gradient(circle, rgba(108,71,255,0.06) 1px, transparent 1px);
+  background-size:32px 32px;
+  pointer-events:none;z-index:0;
+  animation:bgDrift 20s linear infinite;
+}
+@keyframes bgDrift{from{background-position:0 0}to{background-position:32px 32px}}
+
+/* ═══ FLOATING DOODLES ════════════════════════════════════ */
+.doodle{
+  position:fixed;pointer-events:none;z-index:0;
+  font-size:1.6rem;opacity:0.12;
+  animation:floatDoodle var(--dur,14s) ease-in-out infinite alternate;
+  user-select:none;
+}
+@keyframes floatDoodle{
+  from{transform:translate(0,0) rotate(0deg)}
+  to{transform:translate(var(--dx,20px),var(--dy,-30px)) rotate(var(--dr,15deg))}
+}
+
+/* ═══ NAV ══════════════════════════════════════════════════ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  height:var(--nav-h);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 36px;
+  background:rgba(245,240,255,0.88);
+  backdrop-filter:blur(20px);
+  border-bottom:1.5px solid var(--border);
+  transition:background .3s,border-color .3s;
+}
+[data-theme="dark"] nav{background:rgba(14,11,26,0.9)}
+
+.nav-logo{
+  font-family:'Nunito',sans-serif;font-weight:900;font-size:1.3rem;
+  display:flex;align-items:center;gap:10px;
+  background:linear-gradient(135deg,var(--a1),var(--a2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.logo-icon{
+  width:34px;height:34px;border-radius:10px;
+  background:linear-gradient(135deg,var(--a1),var(--a2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;animation:logoBob 2.5s ease-in-out infinite;
+}
+@keyframes logoBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+
+.nav-links{display:flex;gap:2px}
+.nav-links a{
+  padding:7px 16px;border-radius:100px;
+  font-size:0.85rem;font-weight:600;
+  color:var(--text-muted);
+  transition:all var(--tr-fast);
+}
+.nav-links a:hover{color:var(--a1);background:rgba(108,71,255,0.08)}
+
+.nav-right{display:flex;align-items:center;gap:10px}
+.search-wrap{position:relative}
+.search-wrap input{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:100px;padding:8px 16px 8px 38px;
+  font-size:0.83rem;color:var(--text);width:210px;outline:none;
+  transition:all .2s;
+}
+.search-wrap input:focus{border-color:var(--a1);width:250px;box-shadow:0 0 0 3px rgba(108,71,255,0.12)}
+.search-wrap .si{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:0.85rem}
+
+.nav-pill-btn{
+  height:36px;padding:0 14px;border-radius:100px;
+  background:var(--surface);border:1.5px solid var(--border);
+  font-size:0.85rem;font-weight:600;color:var(--text-muted);
+  display:flex;align-items:center;gap:6px;
+  transition:all var(--tr-fast);
+}
+.nav-pill-btn:hover{border-color:var(--a1);color:var(--a1)}
+
+/* XP Badge in nav */
+.xp-badge{
+  display:flex;align-items:center;gap:6px;
+  padding:6px 14px;border-radius:100px;
+  background:linear-gradient(135deg,var(--a4),#ff8c42);
+  color:#fff;font-size:0.8rem;font-weight:800;
+  box-shadow:0 3px 14px rgba(255,181,71,0.4);
+  animation:xpPulse 3s ease-in-out infinite;
+  cursor:pointer;
+}
+@keyframes xpPulse{0%,100%{box-shadow:0 3px 14px rgba(255,181,71,0.4)}50%{box-shadow:0 3px 20px rgba(255,181,71,0.65)}}
+
+.hamburger{display:none;flex-direction:column;gap:5px;padding:4px}
+.hamburger span{width:22px;height:2.5px;background:var(--text);border-radius:3px;transition:all .3s}
+
+/* ═══ MOBILE MENU ═══════════════════════════════════════════ */
+.mobile-menu{
+  display:none;position:fixed;top:var(--nav-h);left:0;right:0;
+  background:var(--surface);border-bottom:1.5px solid var(--border);
+  padding:16px 24px;flex-direction:column;gap:4px;z-index:199;
+}
+.mobile-menu a{
+  padding:12px 16px;border-radius:12px;font-size:0.95rem;font-weight:600;
+  color:var(--text-muted);transition:all .2s;
+}
+.mobile-menu a:hover{color:var(--a1);background:rgba(108,71,255,0.08)}
+.mobile-menu.open{display:flex}
+
+/* ═══ MOTIVATION TICKER ════════════════════════════════════ */
+.ticker-bar{
+  position:fixed;top:var(--nav-h);left:0;right:0;z-index:198;
+  height:36px;
+  background:linear-gradient(90deg,var(--a1),var(--a2),var(--a3),var(--a4),var(--a5),var(--a1));
+  background-size:400% 100%;
+  animation:gradShift 8s linear infinite;
+  overflow:hidden;display:flex;align-items:center;
+}
+@keyframes gradShift{from{background-position:0%}to{background-position:400%}}
+.ticker-inner{
+  display:flex;align-items:center;gap:48px;
+  white-space:nowrap;
+  animation:tickerScroll 30s linear infinite;
+  font-size:0.78rem;font-weight:700;color:#fff;letter-spacing:0.3px;
+  padding-left:100%;
+}
+@keyframes tickerScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.6);margin:0 8px;vertical-align:middle}
+
+/* ═══ CURSOR ════════════════════════════════════════════════ */
+#cursorGlow{
+  position:fixed;width:40px;height:40px;border-radius:50%;
+  border:2px solid rgba(108,71,255,0.45);
+  pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:width .2s,height .2s,border-color .2s;
+  mix-blend-mode:normal;
+}
+
+/* ═══ HERO ══════════════════════════════════════════════════ */
+#hero{
+  padding-top:calc(var(--nav-h) + 36px + 72px);
+  padding-bottom:80px;
+  padding-inline:clamp(20px,5vw,60px);
+  text-align:center;
+  position:relative;overflow:hidden;z-index:1;
+}
+.hero-blobs .blob{
+  position:absolute;border-radius:50%;filter:blur(90px);
+  opacity:0.18;pointer-events:none;
+}
+.blob1{width:550px;height:550px;background:var(--a1);top:-150px;left:-100px;animation:blobDrift 10s ease-in-out infinite alternate}
+.blob2{width:450px;height:450px;background:var(--a2);bottom:-100px;right:-80px;animation:blobDrift 13s ease-in-out infinite alternate-reverse}
+.blob3{width:380px;height:380px;background:var(--a3);top:40%;left:45%;animation:blobDrift 8s ease-in-out infinite alternate}
+@keyframes blobDrift{from{transform:translate(0,0) scale(1)}to{transform:translate(40px,25px) scale(1.06)}}
+
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--surface);border:2px solid var(--border);
+  border-radius:100px;padding:7px 20px;
+  font-size:0.82rem;font-weight:700;color:var(--text-muted);
+  margin-bottom:28px;
+  animation:popIn .6s cubic-bezier(0.34,1.56,0.64,1) both;
+  box-shadow:var(--shadow);
+}
+.badge-glow{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--a3);
+  box-shadow:0 0 8px var(--a3);
+  animation:blinkGlow 2s ease infinite;
+}
+@keyframes blinkGlow{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(1.5)}}
+
+#hero h1{
+  font-size:clamp(2.8rem,6.5vw,5rem);font-weight:900;
+  letter-spacing:-2.5px;line-height:1.02;
+  margin-bottom:22px;
+  animation:popIn .6s cubic-bezier(0.34,1.56,0.64,1) 0.1s both;
+}
+.grad-text{
+  background:linear-gradient(135deg,var(--a1) 0%,var(--a2) 50%,var(--a4) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  background-size:200%;animation:gradAnim 4s ease infinite alternate;
+}
+@keyframes gradAnim{from{background-position:0%}to{background-position:100%}}
+
+#hero p{
+  font-size:1.1rem;color:var(--text-muted);max-width:500px;
+  margin:0 auto 40px;line-height:1.65;
+  animation:popIn .6s cubic-bezier(0.34,1.56,0.64,1) 0.2s both;
+}
+@keyframes popIn{from{opacity:0;transform:translateY(30px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+.hero-ctas{
+  display:flex;gap:14px;justify-content:center;flex-wrap:wrap;
+  animation:popIn .6s cubic-bezier(0.34,1.56,0.64,1) 0.3s both;
+  margin-bottom:60px;
+}
+.btn-fun{
+  padding:14px 32px;border-radius:100px;
+  background:linear-gradient(135deg,var(--a1),var(--a2));
+  color:#fff;font-weight:800;font-size:0.95rem;
+  box-shadow:0 6px 28px rgba(108,71,255,0.4);
+  transition:all var(--tr);position:relative;overflow:hidden;
+  letter-spacing:0.2px;
+}
+.btn-fun::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--a2),var(--a1));
+  opacity:0;transition:opacity .3s;
+}
+.btn-fun:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 10px 40px rgba(108,71,255,0.55)}
+.btn-fun:hover::before{opacity:1}
+.btn-fun span{position:relative;z-index:1}
+.btn-ghost{
+  padding:14px 32px;border-radius:100px;
+  background:var(--surface);border:2px solid var(--border);
+  color:var(--text);font-weight:700;font-size:0.95rem;
+  box-shadow:var(--shadow);
+  transition:all var(--tr);
+}
+.btn-ghost:hover{transform:translateY(-3px);border-color:var(--a1);color:var(--a1);box-shadow:var(--glow)}
+
+/* Hero stats */
+.hero-stats{
+  display:flex;gap:0;justify-content:center;
+  animation:popIn .6s cubic-bezier(0.34,1.56,0.64,1) 0.4s both;
+  background:var(--surface);border:2px solid var(--border);
+  border-radius:24px;padding:20px 40px;width:fit-content;
+  margin:0 auto;box-shadow:var(--shadow);
+}
+.stat{
+  text-align:center;padding:0 32px;
+  border-right:1.5px solid var(--border);
+}
+.stat:last-child{border-right:none}
+.stat-num{
+  font-family:'Nunito',sans-serif;font-size:2.2rem;font-weight:900;
+  line-height:1;
+}
+.stat-label{font-size:0.78rem;color:var(--text-muted);font-weight:600;margin-top:4px}
+
+/* ═══ SECTION WRAPPER ═══════════════════════════════════════ */
+.section{padding:80px clamp(20px,5vw,60px);max-width:1240px;margin:0 auto;position:relative;z-index:1}
+.section-header{margin-bottom:48px}
+.section-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;
+  color:var(--a1);margin-bottom:12px;
+}
+.section-title{
+  font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:900;
+  letter-spacing:-1.2px;line-height:1.08;
+}
+.section-sub{font-size:1rem;color:var(--text-muted);margin-top:10px;max-width:460px;line-height:1.6}
+.divider{height:1.5px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:0}
+
+/* ═══ FUN TABS ══════════════════════════════════════════════ */
+.tab-bar{
+  display:flex;gap:8px;margin-bottom:36px;flex-wrap:wrap;
+}
+.tab-btn{
+  padding:10px 22px;border-radius:100px;
+  font-size:0.875rem;font-weight:700;
+  color:var(--text-muted);
+  border:2px solid var(--border);
+  background:var(--surface);
+  transition:all var(--tr);
+}
+.tab-btn:hover{border-color:var(--a1);color:var(--a1);transform:translateY(-2px)}
+.tab-btn.active{
+  background:linear-gradient(135deg,var(--a1),var(--a2));
+  border-color:transparent;color:#fff;
+  box-shadow:0 6px 20px rgba(108,71,255,0.35);
+  transform:translateY(-2px);
+}
+.tab-pane{display:none}
+.tab-pane.active{display:block;animation:tabIn .3s ease}
+@keyframes tabIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ RESOURCE CARDS ════════════════════════════════════════ */
+.resources-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:22px;
+}
+.res-card{
+  background:var(--surface);border:2px solid var(--border);
+  border-radius:var(--r);padding:28px;
+  box-shadow:var(--shadow);
+  display:flex;flex-direction:column;gap:16px;
+  transition:transform .08s ease, box-shadow .25s ease, border-color .25s ease;
+  position:relative;overflow:hidden;
+}
+.res-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(108,71,255,0.04),rgba(255,77,141,0.04));
+  opacity:0;transition:opacity .3s;
+  pointer-events:none;
+}
+.res-card:hover::before{opacity:1}
+.res-card:hover{box-shadow:var(--shadow-hover);border-color:rgba(108,71,255,0.3)}
+
+.res-card-icon{
+  width:56px;height:56px;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;font-size:1.6rem;
+  transition:transform var(--tr);
+}
+.res-card:hover .res-card-icon{transform:scale(1.12) rotate(-4deg)}
+.ic-blue{background:rgba(108,71,255,0.12)}
+.ic-pink{background:rgba(255,77,141,0.12)}
+.ic-mint{background:rgba(0,201,167,0.12)}
+.ic-amber{background:rgba(255,181,71,0.12)}
+.ic-sky{background:rgba(77,200,255,0.12)}
+
+.res-card h3{font-size:1rem;font-weight:800;margin-bottom:5px}
+.res-card p{font-size:0.84rem;color:var(--text-muted);line-height:1.55}
+.res-card-links{display:flex;flex-direction:column;gap:6px}
+.res-link{
+  display:flex;align-items:center;gap:8px;
+  padding:9px 13px;border-radius:10px;
+  background:var(--surface2);border:1.5px solid var(--border);
+  font-size:0.82rem;font-weight:600;color:var(--text);
+  transition:all .2s;
+}
+.res-link:hover{
+  background:linear-gradient(135deg,var(--a1),var(--a2));
+  color:#fff;border-color:transparent;transform:translateX(4px);
+}
+.view-btn{
+  padding:11px 22px;border-radius:12px;
+  background:linear-gradient(135deg,var(--a1),var(--a2));
+  color:#fff;font-size:0.83rem;font-weight:800;
+  transition:all var(--tr);text-align:center;
+  box-shadow:0 4px 14px rgba(108,71,255,0.3);
+  position:relative;overflow:hidden;
+}
+.view-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(108,71,255,0.45)}
+
+/* ═══ TOOLS GRID ════════════════════════════════════════════ */
+.tools-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:22px;
+}
+.tool-card{
+  background:var(--surface);border:2px solid var(--border);
+  border-radius:var(--r);padding:30px 26px;
+  box-shadow:var(--shadow);cursor:pointer;
+  text-align:center;
+  transition:transform .08s ease, box-shadow .25s ease, border-color .25s ease;
+  position:relative;overflow:hidden;
+}
+.tool-card::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(108,71,255,0.12) 0%,transparent 65%);
+  opacity:0;transition:opacity .3s;pointer-events:none;
+}
+.tool-card:hover::after{opacity:1}
+.tool-card:hover{box-shadow:var(--shadow-hover);border-color:rgba(108,71,255,0.3)}
+
+.tool-card-icon{
+  width:72px;height:72px;border-radius:22px;
+  display:flex;align-items:center;justify-content:center;font-size:2rem;
+  margin:0 auto 18px;
+  transition:transform var(--tr);
+}
+.tool-card:hover .tool-card-icon{transform:scale(1.18) rotate(-6deg)}
+
+.tool-card h3{font-size:1.05rem;font-weight:800;margin-bottom:7px}
+.tool-card p{font-size:0.82rem;color:var(--text-muted);line-height:1.55}
+
+.tool-feat-pills{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:14px}
+.feat-pill{
+  font-size:0.7rem;padding:4px 10px;border-radius:100px;
+  font-weight:700;border:1.5px solid currentColor;
+  opacity:0.85;
+  transition:all .2s;
+}
+.tool-card:hover .feat-pill{opacity:1;transform:scale(1.05)}
+
+.tool-tag{
+  display:inline-flex;align-items:center;gap:5px;
+  margin-top:16px;padding:5px 14px;border-radius:100px;
+  background:var(--surface2);border:1.5px solid var(--border);
+  font-size:0.75rem;font-weight:700;color:var(--text-muted);
+}
+
+/* ═══ GAMIFICATION BAR ══════════════════════════════════════ */
+.xp-bar-section{
+  background:var(--surface);border:2px solid var(--border);
+  border-radius:var(--r);padding:22px 28px;
+  box-shadow:var(--shadow);margin-bottom:32px;
+  display:flex;align-items:center;gap:24px;flex-wrap:wrap;
+}
+.xp-avatar{
+  width:52px;height:52px;border-radius:50%;
+  background:linear-gradient(135deg,var(--a1),var(--a2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;flex-shrink:0;
+  box-shadow:0 4px 16px rgba(108,71,255,0.35);
+  animation:avatarBob 3s ease-in-out infinite;
+}
+@keyframes avatarBob{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-4px) rotate(3deg)}}
+.xp-info{flex:1;min-width:160px}
+.xp-name{font-weight:800;font-size:0.95rem;margin-bottom:4px}
+.xp-level{font-size:0.78rem;color:var(--text-muted);font-weight:600}
+.xp-bar-wrap{flex:2;min-width:200px}
+.xp-bar-label{display:flex;justify-content:space-between;font-size:0.75rem;font-weight:700;color:var(--text-muted);margin-bottom:6px}
+.xp-bar-track{
+  height:12px;background:var(--bg2);border-radius:100px;overflow:hidden;
+  border:1.5px solid var(--border);
+}
+.xp-bar-fill{
+  height:100%;border-radius:100px;
+  background:linear-gradient(90deg,var(--a1),var(--a2),var(--a4));
+  background-size:200%;
+  width:67%;
+  animation:xpFill 1.2s cubic-bezier(0.34,1.56,0.64,1) both, gradShift 3s linear infinite;
+  transition:width .8s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes xpFill{from{width:0}to{width:67%}}
+.xp-badges{display:flex;gap:8px;flex-wrap:wrap}
+.xp-badge-item{
+  padding:5px 12px;border-radius:100px;
+  font-size:0.73rem;font-weight:800;
+  background:linear-gradient(135deg,var(--a1),var(--a2));
+  color:#fff;box-shadow:0 2px 10px rgba(108,71,255,0.3);
+  animation:badgePop .5s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+/* ═══ MODALS ════════════════════════════════════════════════ */
+.modal-overlay{
+  position:fixed;inset:0;z-index:500;
+  background:rgba(10,6,26,0.6);
+  display:flex;align-items:center;justify-content:center;
+  padding:24px;
+  opacity:0;pointer-events:none;
+  transition:opacity .25s;
+  backdrop-filter:blur(8px);
+}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{
+  background:var(--surface);
+  border-radius:24px;
+  box-shadow:0 32px 96px rgba(0,0,0,0.3),0 0 0 1.5px var(--border);
+  width:100%;max-width:600px;
+  max-height:90vh;overflow-y:auto;
+  transform:scale(0.92) translateY(20px);
+  transition:transform .3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.modal-overlay.open .modal{transform:scale(1) translateY(0)}
+.modal-header{
+  padding:26px 30px 0;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;background:var(--surface);z-index:2;
+  border-bottom:1.5px solid var(--border);padding-bottom:18px;margin-bottom:6px;
+}
+.modal-title{font-size:1.25rem;font-weight:900;display:flex;align-items:center;gap:10px}
+.modal-close{
+  width:34px;height:34px;border-radius:10px;
+  background:var(--bg2);border:1.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;color:var(--text-muted);
+  transition:all .2s;
+}
+.modal-close:hover{background:var(--danger);color:#fff;border-color:var(--danger);transform:rotate(90deg)}
+.modal-body{padding:24px 30px 30px}
+
+/* Modal form elements */
+.field-group{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.field-group label{font-size:0.82rem;font-weight:700;color:var(--text-muted)}
+.field-group input,.field-group select,.field-group textarea{
+  padding:11px 14px;border-radius:12px;
+  background:var(--surface2);border:2px solid var(--border);
+  color:var(--text);font-size:0.9rem;outline:none;
+  transition:all .2s;
+}
+.field-group input:focus,.field-group select:focus,.field-group textarea:focus{
+  border-color:var(--a1);box-shadow:0 0 0 3px rgba(108,71,255,0.12);
+}
+.field-group textarea{resize:vertical;min-height:90px}
+.error-msg{font-size:0.75rem;color:var(--danger);display:none;font-weight:600}
+.has-error input,.has-error select,.has-error textarea{border-color:var(--danger)}
+.has-error .error-msg{display:block}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* Submit/action buttons */
+.submit-btn{
+  width:100%;padding:14px 24px;border-radius:14px;
+  background:linear-gradient(135deg,var(--a1),var(--a2));
+  color:#fff;font-size:0.95rem;font-weight:800;
+  box-shadow:0 6px 20px rgba(108,71,255,0.35);
+  transition:all var(--tr);position:relative;overflow:hidden;
+}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(108,71,255,0.5)}
+
+/* GPA */
+.gpa-course-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.gpa-row{
+  display:grid;grid-template-columns:1fr 100px 100px 36px;gap:8px;align-items:center;
+}
+.gpa-row input,.gpa-row select{
+  padding:9px 12px;border-radius:10px;
+  background:var(--surface2);border:2px solid var(--border);
+  color:var(--text);font-size:0.85rem;outline:none;width:100%;
+  transition:border-color .2s;
+}
+.gpa-row input:focus,.gpa-row select:focus{border-color:var(--a1)}
+.gpa-del{
+  width:34px;height:34px;border-radius:9px;
+  background:rgba(255,59,92,0.1);color:var(--danger);
+  border:1.5px solid rgba(255,59,92,0.2);font-size:1rem;
+  transition:all .2s;display:flex;align-items:center;justify-content:center;
+}
+.gpa-del:hover{background:var(--danger);color:#fff;border-color:var(--danger)}
+.add-course-btn{
+  padding:10px 18px;border-radius:100px;
+  background:rgba(108,71,255,0.1);border:2px dashed rgba(108,71,255,0.3);
+  color:var(--a1);font-size:0.85rem;font-weight:700;
+  transition:all .2s;width:100%;
+}
+.add-course-btn:hover{background:rgba(108,71,255,0.15);border-style:solid}
+.gpa-result{
+  text-align:center;padding:24px;border-radius:16px;
+  background:linear-gradient(135deg,rgba(108,71,255,0.08),rgba(255,77,141,0.08));
+  border:2px solid rgba(108,71,255,0.15);margin-top:18px;
+  animation:popIn .4s cubic-bezier(0.34,1.56,0.64,1);
+}
+.gpa-num{font-size:3rem;font-weight:900;font-family:'Nunito',sans-serif;
+  background:linear-gradient(135deg,var(--a1),var(--a2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.gpa-label{font-size:0.9rem;font-weight:700;color:var(--text-muted);margin-top:4px}
+
+/* Timetable */
+.tt-grid{overflow-x:auto;border-radius:14px;border:2px solid var(--border)}
+.tt-table{width:100%;border-collapse:collapse}
+.tt-table th{
+  padding:10px 8px;background:linear-gradient(135deg,var(--a1),var(--a2));
+  color:#fff;font-size:0.78rem;font-weight:800;text-align:center;
+}
+.tt-table td{padding:4px;border:1px solid var(--border);vertical-align:top}
+.tt-table tr:nth-child(even) td{background:var(--bg2)}
+.tt-cell{
+  width:100%;min-height:38px;padding:5px 8px;
+  background:transparent;border:none;resize:none;
+  font-size:0.75rem;color:var(--text);outline:none;
+  font-family:inherit;
+}
+.tt-cell:focus{background:rgba(108,71,255,0.06);border-radius:6px}
+.tt-actions{display:flex;gap:10px;margin-top:16px}
+.timer-btn{
+  padding:11px 22px;border-radius:12px;
+  background:var(--surface2);border:2px solid var(--border);
+  color:var(--text);font-size:0.875rem;font-weight:700;
+  transition:all var(--tr);
+}
+.timer-btn:hover{border-color:var(--a1);color:var(--a1);transform:translateY(-2px)}
+.timer-btn.primary{
+  background:linear-gradient(135deg,var(--a1),var(--a2));
+  border-color:transparent;color:#fff;
+  box-shadow:0 4px 14px rgba(108,71,255,0.35);
+}
+.timer-btn.primary:hover{box-shadow:0 8px 24px rgba(108,71,255,0.5);color:#fff}
+
+/* Pomodoro */
+.timer-presets{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+.preset-btn{
+  padding:9px 18px;border-radius:100px;
+  background:var(--surface2);border:2px solid var(--border);
+  font-size:0.83rem;font-weight:700;color:var(--text-muted);
+  transition:all var(--tr);
+}
+.preset-btn:hover{border-color:var(--a1);color:var(--a1);transform:scale(1.04)}
+.preset-btn.active{
+  background:linear-gradient(135deg,var(--a1),var(--a2));
+  border-color:transparent;color:#fff;
+  box-shadow:0 4px 14px rgba(108,71,255,0.35);
+}
+.timer-display{display:flex;flex-direction:column;align-items:center;gap:20px}
+.timer-circle{
+  width:180px;height:180px;border-radius:50%;
+  background:conic-gradient(var(--a1) 0%,var(--surface2) 0%);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+  box-shadow:0 8px 32px rgba(108,71,255,0.25);
+  transition:background .1s;
+}
+.timer-inner{
+  width:150px;height:150px;border-radius:50%;
+  background:var(--surface);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  position:absolute;box-shadow:inset 0 2px 8px rgba(0,0,0,0.08);
+}
+.timer-time{font-size:2.4rem;font-weight:900;font-family:'Nunito',sans-serif}
+.timer-mode{font-size:0.78rem;font-weight:700;color:var(--text-muted)}
+.timer-btns{display:flex;gap:10px}
+
+/* Unit converter */
+.converter-form{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:end;margin-top:12px}
+.swap-btn{
+  width:40px;height:40px;border-radius:12px;
+  background:linear-gradient(135deg,var(--a1),var(--a2));
+  color:#fff;font-size:1.2rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 14px rgba(108,71,255,0.35);
+  transition:all var(--tr);
+}
+.swap-btn:hover{transform:rotate(180deg) scale(1.1)}
+.conv-result{
+  text-align:center;padding:16px;border-radius:14px;
+  background:linear-gradient(135deg,rgba(108,71,255,0.08),rgba(0,201,167,0.08));
+  border:2px solid rgba(108,71,255,0.15);margin-top:16px;
+  font-size:1.5rem;font-weight:900;font-family:'Nunito',sans-serif;
+  color:var(--a1);
+}
+
+/* Quick Notes */
+#quickNotesArea{
+  width:100%;min-height:180px;padding:16px;border-radius:14px;
+  background:var(--surface2);border:2px solid var(--border);
+  color:var(--text);resize:vertical;font-size:0.9rem;outline:none;
+  line-height:1.6;transition:border-color .2s;
+}
+#quickNotesArea:focus{border-color:var(--a1);box-shadow:0 0 0 3px rgba(108,71,255,0.12)}
+.notes-meta{font-size:0.75rem;color:var(--text-muted);font-weight:600;margin-top:8px}
+
+/* ═══ MOTIVATION CARDS ══════════════════════════════════════ */
+.motivation-strip{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;
+  margin-bottom:32px;
+}
+.mot-card{
+  padding:20px 22px;border-radius:var(--r);border:2px solid var(--border);
+  background:var(--surface);box-shadow:var(--shadow);
+  position:relative;overflow:hidden;transition:all var(--tr);
+}
+.mot-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  background:var(--card-accent,linear-gradient(90deg,var(--a1),var(--a2)));
+}
+.mot-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-hover)}
+.mot-card .mot-icon{font-size:1.6rem;margin-bottom:8px}
+.mot-card .mot-text{font-size:0.82rem;font-weight:700;color:var(--text-muted);line-height:1.4}
+.mot-card .mot-val{font-size:1.4rem;font-weight:900;font-family:'Nunito',sans-serif}
+
+/* ═══ REQUEST FORM ══════════════════════════════════════════ */
+.form-card{
+  background:var(--surface);border:2px solid var(--border);
+  border-radius:24px;padding:40px;box-shadow:var(--shadow);
+  max-width:680px;margin:0 auto;
+}
+.success-msg{display:none;text-align:center;padding:40px}
+.success-icon{
+  width:72px;height:72px;border-radius:50%;
+  background:linear-gradient(135deg,var(--a3),var(--a5));
+  display:flex;align-items:center;justify-content:center;
+  font-size:2rem;margin:0 auto 20px;
+  animation:popIn .5s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow:0 8px 28px rgba(0,201,167,0.35);
+}
+.success-msg h3{font-size:1.5rem;font-weight:900;margin-bottom:8px}
+.success-msg p{color:var(--text-muted);font-size:0.9rem}
+
+/* ═══ FOOTER ═════════════════════════════════════════════════ */
+footer{
+  background:var(--surface);border-top:2px solid var(--border);
+  padding:60px clamp(20px,5vw,60px) 30px;
+  position:relative;z-index:1;
+}
+.footer-inner{
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;
+  max-width:1240px;margin:0 auto;padding-bottom:40px;
+  border-bottom:1.5px solid var(--border);margin-bottom:24px;
+}
+.footer-brand p{font-size:0.85rem;color:var(--text-muted);margin-top:10px;line-height:1.6}
+.footer-col h4{font-weight:800;margin-bottom:14px;font-size:0.9rem}
+.footer-col a{
+  display:block;padding:5px 0;color:var(--text-muted);
+  font-size:0.85rem;font-weight:600;transition:color .2s;
+}
+.footer-col a:hover{color:var(--a1)}
+.footer-bottom{
+  display:flex;align-items:center;justify-content:space-between;
+  max-width:1240px;margin:0 auto;
+  font-size:0.82rem;color:var(--text-muted);font-weight:600;
+}
+.social-links{display:flex;gap:8px}
+.social-btn{
+  width:36px;height:36px;border-radius:10px;
+  background:var(--surface2);border:1.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.85rem;transition:all .2s;
+}
+.social-btn:hover{background:var(--a1);border-color:var(--a1);transform:translateY(-2px);filter:brightness(1.2)}
+
+/* ═══ PARTICLES / EFFECTS ═══════════════════════════════════ */
+.spark{
+  position:fixed;border-radius:50%;pointer-events:none;z-index:9997;
+  animation:sparkFly .7s ease forwards;
+  transform:translate(-50%,-50%);
+}
+@keyframes sparkFly{
+  0%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(0)}
+}
+.ripple-ring{
+  position:fixed;border-radius:50%;pointer-events:none;z-index:9996;
+  border:2px solid rgba(108,71,255,0.5);
+  transform:translate(-50%,-50%);
+  animation:rippleOut .6s ease forwards;
+}
+@keyframes rippleOut{
+  0%{opacity:0.8;transform:translate(-50%,-50%) scale(0.2)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(2.5)}
+}
+.ink-btn{position:relative;overflow:hidden}
+.ink-drop{
+  position:absolute;border-radius:50%;pointer-events:none;
+  background:rgba(255,255,255,0.35);
+  animation:inkSpread .5s ease forwards;transform:scale(0);
+}
+@keyframes inkSpread{to{transform:scale(6);opacity:0}}
+.confetti-piece{
+  position:fixed;pointer-events:none;z-index:9998;
+  width:8px;height:8px;border-radius:2px;
+  animation:confettifall var(--dur,1.2s) ease forwards;
+}
+@keyframes confettifall{
+  0%{opacity:1;transform:translate(0,0) rotate(0deg)}
+  100%{opacity:0;transform:translate(var(--dx,0px),var(--dy,200px)) rotate(var(--dr,360deg))}
+}
+.page-particle{
+  position:fixed;pointer-events:none;z-index:9997;
+  animation:pageFlutter var(--dur,0.8s) ease forwards;
+}
+@keyframes pageFlutter{
+  0%{opacity:1;transform:translate(0,0) rotate(0deg) scale(1)}
+  100%{opacity:0;transform:translate(var(--px),var(--py)) rotate(var(--pr)) scale(0.3)}
+}
+
+/* ═══ SCROLL ANIMATIONS ═════════════════════════════════════ */
+.scroll-reveal{
+  opacity:0;transform:translateY(30px);
+  transition:opacity .6s ease, transform .6s cubic-bezier(0.34,1.56,0.64,1);
+}
+.scroll-reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ═══ RESPONSIVE ════════════════════════════════════════════ */
+@media(max-width:900px){
+  .footer-inner{grid-template-columns:1fr 1fr}
+  .hero-stats{flex-wrap:wrap}
+}
+@media(max-width:700px){
+  nav{padding:0 20px}
+  .nav-links,.search-wrap,.xp-badge{display:none}
+  .hamburger{display:flex}
+  .section{padding:60px 20px}
+  .form-row{grid-template-columns:1fr}
+  .form-card{padding:24px 20px}
+  .hero-stats{flex-direction:column;gap:0}
+  .stat{border-right:none;border-bottom:1.5px solid var(--border);padding:14px 32px}
+  .stat:last-child{border-bottom:none}
+  .footer-inner{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;gap:12px;text-align:center}
+  .converter-form{grid-template-columns:1fr;gap:8px}
+  .swap-btn{margin:0 auto}
+  #cursorGlow{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ── Floating Doodles ─────────────────────────────────── -->
+<div class="doodle" style="top:12%;left:4%;--dur:11s;--dx:25px;--dy:-35px;--dr:20deg">📐</div>
+<div class="doodle" style="top:20%;right:5%;--dur:14s;--dx:-20px;--dy:30px;--dr:-15deg">✏️</div>
+<div class="doodle" style="top:45%;left:2%;--dur:9s;--dx:30px;--dy:-20px;--dr:25deg">📏</div>
+<div class="doodle" style="top:60%;right:3%;--dur:16s;--dx:-25px;--dy:-30px;--dr:-20deg">🔭</div>
+<div class="doodle" style="top:75%;left:6%;--dur:12s;--dx:20px;--dy:25px;--dr:18deg">🧬</div>
+<div class="doodle" style="top:35%;right:2%;--dur:10s;--dx:-15px;--dy:20px;--dr:-12deg">💡</div>
+<div class="doodle" style="top:82%;right:7%;--dur:13s;--dx:18px;--dy:-22px;--dr:30deg">🎯</div>
+<div class="doodle" style="top:5%;right:20%;--dur:17s;--dx:-10px;--dy:15px;--dr:-8deg">⭐</div>
+
+<!-- ── Motivation Ticker ────────────────────────────────── -->
+<div class="ticker-bar">
+  <div class="ticker-inner" id="tickerInner"></div>
+</div>
+
+<!-- ── Cursor Glow ──────────────────────────────────────── -->
+<div id="cursorGlow"></div>
+
+<!-- ── Navigation ──────────────────────────────────────── -->
+<nav>
+  <a href="#hero" class="nav-logo">
+    <div class="logo-icon">🎓</div>
+    StudyNest
+  </a>
+  <div class="nav-links">
+    <a href="#resources">📖 Resources</a>
+    <a href="#tools">🔧 Tools</a>
+    <a href="#request">✈️ Request</a>
+  </div>
+  <div class="nav-right">
+    <div class="search-wrap">
+      <span class="si">🔍</span>
+      <input type="text" id="searchInput" placeholder="Search resources…">
+    </div>
+    <div class="xp-badge" id="navXpBadge" title="Your XP">⚡ 670 XP</div>
+    <button class="nav-pill-btn" id="themeToggle">
+      <span id="themeIcon">🌙</span> Theme
+    </button>
+    <button class="hamburger" id="menuToggle">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#resources" onclick="closeMobileMenu()">📖 Resources</a>
+  <a href="#tools" onclick="closeMobileMenu()">🔧 Tools</a>
+  <a href="#request" onclick="closeMobileMenu()">✈️ Request</a>
+</div>
+
+<!-- ── Hero ─────────────────────────────────────────────── -->
+<section id="hero">
+  <div class="hero-blobs">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+  </div>
+
+  <div class="hero-badge">
+    <span class="badge-glow"></span>
+    🔥 New resources added weekly
+  </div>
+
+  <h1>Study smarter,<br><span class="grad-text">not harder ✨</span></h1>
+
+  <p>Everything you need to ace your semester — resources, GPA calc, timers, notes, and tools that make studying actually fun.</p>
+
+  <div class="hero-ctas">
+    <a href="#resources" class="btn-fun ink-btn"><span>📖 Browse Resources</span></a>
+    <a href="#tools" class="btn-ghost">🔧 Open Tools</a>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num" id="counterRes" style="color:var(--a1)">0</div>
+      <div class="stat-label">📂 Resources</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="counterSub" style="color:var(--a2)">0</div>
+      <div class="stat-label">🔖 Subjects</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="counterTools" style="color:var(--a3)">0</div>
+      <div class="stat-label">🧰 Tools</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Resources ────────────────────────────────────────── -->
+<section id="resources" class="section">
+  <div class="section-header scroll-reveal">
+    <div class="section-tag">📚 Study Materials</div>
+    <h2 class="section-title">Academic Resources</h2>
+    <p class="section-sub">Curated materials, notes, and platforms to boost your learning game.</p>
+  </div>
+
+  <!-- Motivation strip -->
+  <div class="motivation-strip scroll-reveal">
+    <div class="mot-card" style="--card-accent:linear-gradient(90deg,var(--a1),var(--a2))">
+      <div class="mot-icon">🔥</div>
+      <div class="mot-val" id="streakCount">7 Days</div>
+      <div class="mot-text">Study streak — keep it going!</div>
+    </div>
+    <div class="mot-card" style="--card-accent:linear-gradient(90deg,var(--a2),var(--a4))">
+      <div class="mot-icon">⭐</div>
+      <div class="mot-val">Level 12</div>
+      <div class="mot-text">Scholar rank — 330 XP to Level 13</div>
+    </div>
+    <div class="mot-card" style="--card-accent:linear-gradient(90deg,var(--a3),var(--a5))">
+      <div class="mot-icon">💬</div>
+      <div class="mot-val" id="quoteEl" style="font-size:0.85rem;line-height:1.4;font-weight:700"></div>
+      <div class="mot-text">Daily motivation</div>
+    </div>
+    <div class="mot-card" style="--card-accent:linear-gradient(90deg,var(--a4),var(--a3))">
+      <div class="mot-icon">🎯</div>
+      <div class="mot-val">82%</div>
+      <div class="mot-text">Weekly study goal</div>
+    </div>
+  </div>
+
+  <!-- XP bar -->
+  <div class="xp-bar-section scroll-reveal">
+    <div class="xp-avatar">🦊</div>
+    <div class="xp-info">
+      <div class="xp-name">StudyNest Explorer</div>
+      <div class="xp-level">Level 12 Scholar · 670 / 1000 XP</div>
+    </div>
+    <div class="xp-bar-wrap">
+      <div class="xp-bar-label"><span>XP Progress</span><span>670 / 1000</span></div>
+      <div class="xp-bar-track"><div class="xp-bar-fill" id="xpBarFill"></div></div>
+    </div>
+    <div class="xp-badges">
+      <span class="xp-badge-item" style="animation-delay:.1s">🏆 First Login</span>
+      <span class="xp-badge-item" style="animation-delay:.2s;background:linear-gradient(135deg,var(--a3),var(--a5))">🔥 7-Day Streak</span>
+      <span class="xp-badge-item" style="animation-delay:.3s;background:linear-gradient(135deg,var(--a4),var(--a2))">⭐ Scholar</span>
+    </div>
+  </div>
+
+  <div class="tab-bar scroll-reveal">
+    <button class="tab-btn active" onclick="switchTab('study')">📄 Study Materials</button>
+    <button class="tab-btn" onclick="switchTab('notes')">🗒️ Notes</button>
+    <button class="tab-btn" onclick="switchTab('platforms')">🌐 Platforms</button>
+  </div>
+
+  <!-- Study Materials -->
+  <div id="tab-study" class="tab-pane active">
+    <div class="resources-grid">
+      <div class="res-card scroll-reveal" data-keywords="mathematics calculus algebra">
+        <div class="res-card-icon ic-blue">🧮</div>
+        <div><h3>Mathematics Bundle</h3><p>Calculus, Linear Algebra, Discrete Math — PDFs with solved examples.</p></div>
+        <div class="res-card-links">
+          <a class="res-link" href="#">📄 Calculus Notes.pdf</a>
+          <a class="res-link" href="#">📄 Linear Algebra.pdf</a>
+        </div>
+        <a href="#" class="view-btn ink-btn">🔗 View Resource</a>
+      </div>
+      <div class="res-card scroll-reveal" data-keywords="physics mechanics thermodynamics">
+        <div class="res-card-icon ic-pink">⚛️</div>
+        <div><h3>Physics Materials</h3><p>Mechanics, Electromagnetism & Thermodynamics with diagrams and formula sheets.</p></div>
+        <div class="res-card-links">
+          <a class="res-link" href="#">📄 Mechanics.pdf</a>
+          <a class="res-link" href="#">📁 Formula Sheet Drive</a>
+        </div>
+        <a href="#" class="view-btn ink-btn">🔗 View Resource</a>
+      </div>
+      <div class="res-card scroll-reveal" data-keywords="computer science programming algorithms">
+        <div class="res-card-icon ic-mint">💻</div>
+        <div><h3>Computer Science</h3><p>Data Structures, Algorithms, OS concepts — beginner to advanced.</p></div>
+        <div class="res-card-links">
+          <a class="res-link" href="#">📄 DSA Handbook.pdf</a>
+          <a class="res-link" href="#">💻 Code Repository</a>
+        </div>
+        <a href="#" class="view-btn ink-btn">🔗 View Resource</a>
+      </div>
+      <div class="res-card scroll-reveal" data-keywords="chemistry organic inorganic reactions">
+        <div class="res-card-icon ic-amber">🧪</div>
+        <div><h3>Chemistry Resources</h3><p>Organic reactions, periodic table mnemonics, and lab practical guides.</p></div>
+        <div class="res-card-links">
+          <a class="res-link" href="#">📄 Organic Chem.pdf</a>
+          <a class="res-link" href="#">📁 Lab Guides Drive</a>
+        </div>
+        <a href="#" class="view-btn ink-btn">🔗 View Resource</a>
+      </div>
+      <div class="res-card scroll-reveal" data-keywords="economics micro macro finance">
+        <div class="res-card-icon ic-sky">📈</div>
+        <div><h3>Economics & Finance</h3><p>Micro & Macro Economics, financial analysis, and business management.</p></div>
+        <div class="res-card-links">
+          <a class="res-link" href="#">📄 Microeconomics.pdf</a>
+          <a class="res-link" href="#">📄 Finance Basics.pdf</a>
+        </div>
+        <a href="#" class="view-btn ink-btn">🔗 View Resource</a>
+      </div>
+      <div class="res-card scroll-reveal" data-keywords="english literature writing essays">
+        <div class="res-card-icon ic-pink">✍️</div>
+        <div><h3>English & Writing</h3><p>Essay writing guides, grammar reference, literature analysis frameworks.</p></div>
+        <div class="res-card-links">
+          <a class="res-link" href="#">📄 Essay Writing.pdf</a>
+          <a class="res-link" href="#">📁 Templates Drive</a>
+        </div>
+        <a href="#" class="view-btn ink-btn">🔗 View Resource</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notes -->
+  <div id="tab-notes" class="tab-pane">
+    <div class="resources-grid">
+      <div class="res-card scroll-reveal" data-keywords="math notes semester">
+        <div class="res-card-icon ic-blue">📓</div>
+        <div><h3>Maths — Semester 1</h3><p>Handwritten + typed notes organized by chapter with worked examples.</p></div>
+        <div class="res-card-links">
+          <a class="res-link" href="#">📂 Chapter 1–5 Notes</a>
+          <a class="res-link" href="#">📂 Chapter 6–10 Notes</a>
+        </div>
+        <a href="#" class="view-btn ink-btn">🔗 View Resource</a>
+      </div>
+      <div class="res-card scroll-reveal" data-keywords="physics lab notes experiment">
+        <div class="res-card-icon ic-mint">🔬</div>
+        <div><h3>Physics — Lab Notes</h3><p>Experiment procedures, observations, and analysis templates.</p></div>
+        <div class="res-card-links">
+          <a class="res-link" href="#">📂 Sem 1 Lab Book</a>
+          <a class="res-link" href="#">📂 Sem 2 Lab Book</a>
+        </div>
+        <a href="#" class="view-btn ink-btn">🔗 View Resource</a>
+      </div>
+      <div class="res-card scroll-reveal" data-keywords="cs lecture slides programming">
+        <div class="res-card-icon ic-sky">🖥️</div>
+        <div><h3>CS — Lecture Slides</h3><p>Annotated lecture slides with additional explanations for complex topics.</p></div>
+        <div class="res-card-links">
+          <a class="res-link" href="#">📂 Unit 1–4 Slides</a>
+          <a class="res-link" href="#">📂 Unit 5–8 Slides</a>
+        </div>
+        <a href="#" class="view-btn ink-btn">🔗 View Resource</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Platforms -->
+  <div id="tab-platforms" class="tab-pane">
+    <div class="resources-grid">
+      <div class="res-card scroll-reveal" data-keywords="coursera online courses">
+        <div class="res-card-icon ic-blue">🎓</div>
+        <div><h3>Coursera</h3><p>World-class courses from top universities. Free audit available for most.</p></div>
+        <div class="res-card-links">
+          <a class="res-link" href="https://coursera.org" target="_blank">🔗 Open Coursera</a>
+        </div>
+        <a href="https://coursera.org" target="_blank" class="view-btn ink-btn">Visit Platform</a>
+      </div>
+      <div class="res-card scroll-reveal" data-keywords="khan academy free math">
+        <div class="res-card-icon ic-mint">📚</div>
+        <div><h3>Khan Academy</h3><p>Free world-class education for everyone. Great for fundamentals and SAT prep.</p></div>
+        <div class="res-card-links">
+          <a class="res-link" href="https://khanacademy.org" target="_blank">🔗 Open Khan Academy</a>
+        </div>
+        <a href="https://khanacademy.org" target="_blank" class="view-btn ink-btn">Visit Platform</a>
+      </div>
+      <div class="res-card scroll-reveal" data-keywords="mit free courses engineering">
+        <div class="res-card-icon ic-amber">🏛️</div>
+        <div><h3>MIT OpenCourseWare</h3><p>Free course materials from MIT. Full lecture notes, exams, and solutions.</p></div>
+        <div class="res-card-links">
+          <a class="res-link" href="https://ocw.mit.edu" target="_blank">🔗 Open MIT OCW</a>
+        </div>
+        <a href="https://ocw.mit.edu" target="_blank" class="view-btn ink-btn">Visit Platform</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Tools ─────────────────────────────────────────────── -->
+<section id="tools" class="section">
+  <div class="section-header scroll-reveal">
+    <div class="section-tag">🔧 Academic Utilities</div>
+    <h2 class="section-title">Useful Tools</h2>
+    <p class="section-sub">Interactive tools that make studying smarter and way less boring.</p>
+  </div>
+
+  <div class="tools-grid">
+    <div class="tool-card scroll-reveal" onclick="openModal('gpaModal')" onmousemove="toolCardGlow(event,this)">
+      <div class="tool-card-icon ic-blue">🧮</div>
+      <h3>GPA Calculator</h3>
+      <p>Enter your grades and credit hours to calculate your semester GPA instantly.</p>
+      <div class="tool-feat-pills">
+        <span class="feat-pill" style="color:var(--a1)">⭐ Grades</span>
+        <span class="feat-pill" style="color:var(--a2)">🎓 Credits</span>
+        <span class="feat-pill" style="color:var(--a3)">📊 GPA Score</span>
+      </div>
+      <span class="tool-tag">👆 Click to Open</span>
+    </div>
+    <div class="tool-card scroll-reveal" onclick="openModal('ttModal')" onmousemove="toolCardGlow(event,this)">
+      <div class="tool-card-icon ic-pink">📅</div>
+      <h3>Timetable Planner</h3>
+      <p>Build your weekly schedule. Edit any slot and save automatically to your browser.</p>
+      <div class="tool-feat-pills">
+        <span class="feat-pill" style="color:var(--a2)">🗂️ Weekly Grid</span>
+        <span class="feat-pill" style="color:var(--a1)">💾 Auto Save</span>
+        <span class="feat-pill" style="color:var(--a3)">✏️ Editable</span>
+      </div>
+      <span class="tool-tag">👆 Click to Open</span>
+    </div>
+    <div class="tool-card scroll-reveal" onclick="openModal('timerModal')" onmousemove="toolCardGlow(event,this)">
+      <div class="tool-card-icon ic-mint">⏱️</div>
+      <h3>Pomodoro Timer</h3>
+      <p>Focus with the Pomodoro technique. 25-min work sessions, 5-min breaks.</p>
+      <div class="tool-feat-pills">
+        <span class="feat-pill" style="color:var(--a3)">🧠 Focus 25m</span>
+        <span class="feat-pill" style="color:var(--a4)">☕ Break 5m</span>
+        <span class="feat-pill" style="color:var(--a2)">🏆 Sessions</span>
+      </div>
+      <span class="tool-tag">👆 Click to Open</span>
+    </div>
+    <div class="tool-card scroll-reveal" onclick="openModal('converterModal')" onmousemove="toolCardGlow(event,this)">
+      <div class="tool-card-icon ic-amber">🔄</div>
+      <h3>Unit Converter</h3>
+      <p>Convert between length, mass, temperature, speed, and data units instantly.</p>
+      <div class="tool-feat-pills">
+        <span class="feat-pill" style="color:var(--a4)">📏 Length</span>
+        <span class="feat-pill" style="color:var(--a1)">⚖️ Mass</span>
+        <span class="feat-pill" style="color:var(--a2)">🌡️ Temp</span>
+        <span class="feat-pill" style="color:var(--a3)">💾 Data</span>
+      </div>
+      <span class="tool-tag">👆 Click to Open</span>
+    </div>
+    <div class="tool-card scroll-reveal" onclick="openModal('notesModal')" onmousemove="toolCardGlow(event,this)">
+      <div class="tool-card-icon ic-sky">📝</div>
+      <h3>Quick Notes</h3>
+      <p>Jot down ideas instantly. Notes are auto-saved locally in your browser.</p>
+      <div class="tool-feat-pills">
+        <span class="feat-pill" style="color:var(--a5)">💾 Auto Save</span>
+        <span class="feat-pill" style="color:var(--a1)">📋 Copy</span>
+        <span class="feat-pill" style="color:var(--a3)">📝 Word Count</span>
+      </div>
+      <span class="tool-tag">👆 Click to Open</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══ MODALS ═══════════════════════════════════════════════ -->
+
+<!-- GPA Modal -->
+<div class="modal-overlay" id="gpaModal" onclick="closeModalOutside(event,'gpaModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🧮 GPA Calculator</div>
+      <button class="modal-close" onclick="closeModal('gpaModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 100px 100px 36px;gap:8px;margin-bottom:10px;padding:0 2px">
+        <span style="font-size:0.75rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Course</span>
+        <span style="font-size:0.75rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Grade</span>
+        <span style="font-size:0.75rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Credits</span>
+        <span></span>
+      </div>
+      <div class="gpa-course-list" id="gpaCourseList"></div>
+      <button class="add-course-btn" onclick="addGPARow()">➕ Add Course</button>
+      <button class="submit-btn ink-btn" style="margin-top:16px" onclick="calcGPA()">🎯 Calculate GPA</button>
+      <div class="gpa-result" id="gpaResult" style="display:none">
+        <div class="gpa-num" id="gpaNum">0.00</div>
+        <div class="gpa-label" id="gpaLabel">Semester GPA</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Timetable Modal -->
+<div class="modal-overlay" id="ttModal" onclick="closeModalOutside(event,'ttModal')">
+  <div class="modal" style="max-width:760px">
+    <div class="modal-header">
+      <div class="modal-title">📅 Timetable Planner</div>
+      <button class="modal-close" onclick="closeModal('ttModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="tt-grid"><table class="tt-table" id="ttTable"></table></div>
+      <div class="tt-actions">
+        <button class="timer-btn primary ink-btn" onclick="saveTimetable()">💾 Save</button>
+        <button class="timer-btn ink-btn" onclick="clearTimetable()">🗑️ Clear</button>
+      </div>
+      <p style="font-size:0.78rem;color:var(--text-muted);margin-top:8px">ℹ️ Timetable auto-saved to your browser's local storage.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Pomodoro Modal -->
+<div class="modal-overlay" id="timerModal" onclick="closeModalOutside(event,'timerModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">⏱️ Pomodoro Timer</div>
+      <button class="modal-close" onclick="closeModal('timerModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="timer-presets">
+        <button class="preset-btn active" onclick="setTimerMode('pomodoro',this)">🧠 Pomodoro 25</button>
+        <button class="preset-btn" onclick="setTimerMode('short',this)">☕ Short Break 5</button>
+        <button class="preset-btn" onclick="setTimerMode('long',this)">🛋️ Long Break 15</button>
+      </div>
+      <div class="timer-display">
+        <div class="timer-circle" id="timerCircle">
+          <div class="timer-inner">
+            <div class="timer-time" id="timerDisplay">25:00</div>
+            <div class="timer-mode" id="timerMode">Focus Time</div>
+          </div>
+        </div>
+        <div class="timer-btns">
+          <button class="timer-btn primary ink-btn" id="timerStartBtn" onclick="toggleTimer()">▶ Start</button>
+          <button class="timer-btn ink-btn" onclick="resetTimer()">↺ Reset</button>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:0.82rem;color:var(--text-muted);margin-top:14px">
+        🏆 Sessions completed: <strong id="sessionCount">0</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Converter Modal -->
+<div class="modal-overlay" id="converterModal" onclick="closeModalOutside(event,'converterModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🔄 Unit Converter</div>
+      <button class="modal-close" onclick="closeModal('converterModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group">
+        <label>🏷️ Category</label>
+        <select id="convCategory" onchange="updateUnits()">
+          <option value="length">📏 Length</option>
+          <option value="mass">⚖️ Mass / Weight</option>
+          <option value="temp">🌡️ Temperature</option>
+          <option value="speed">💨 Speed</option>
+          <option value="data">💾 Data Storage</option>
+        </select>
+      </div>
+      <div class="converter-form">
+        <div class="field-group" style="margin-bottom:0">
+          <label>From</label>
+          <select id="convFrom"></select>
+          <input type="number" id="convInput" placeholder="Enter value" oninput="convert()" style="margin-top:8px">
+        </div>
+        <button class="swap-btn" onclick="swapUnits()" title="Swap">⇄</button>
+        <div class="field-group" style="margin-bottom:0">
+          <label>To</label>
+          <select id="convTo"></select>
+        </div>
+      </div>
+      <div class="conv-result" id="convResult">—</div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Notes Modal -->
+<div class="modal-overlay" id="notesModal" onclick="closeModalOutside(event,'notesModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">📝 Quick Notes</div>
+      <button class="modal-close" onclick="closeModal('notesModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <textarea id="quickNotesArea" placeholder="Start typing your notes… everything auto-saves ✨"></textarea>
+      <div class="notes-meta" id="notesMeta">0 characters · Auto-saved</div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="timer-btn primary ink-btn" onclick="copyNotes()">📋 Copy</button>
+        <button class="timer-btn ink-btn" onclick="clearNotes()">🗑️ Clear</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ── Request Form ──────────────────────────────────────── -->
+<section id="request">
+  <div class="section" style="padding-top:80px;padding-bottom:80px">
+    <div class="section-header scroll-reveal" style="text-align:center;max-width:480px;margin:0 auto 48px">
+      <div class="section-tag" style="justify-content:center">✈️ Suggestions</div>
+      <h2 class="section-title">🙌 Request a Resource</h2>
+      <p class="section-sub" style="max-width:none">Can't find what you need? Tell us and we'll add it!</p>
+    </div>
+    <div class="form-card scroll-reveal">
+      <div id="requestForm">
+        <div class="form-row">
+          <div class="field-group">
+            <label>👤 Student Name</label>
+            <input type="text" id="fname" placeholder="Your full name">
+            <span class="error-msg">Please enter your name.</span>
+          </div>
+          <div class="field-group">
+            <label>📧 Email Address</label>
+            <input type="email" id="femail" placeholder="you@college.edu">
+            <span class="error-msg">Please enter a valid email.</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field-group">
+            <label>📚 Subject / Topic</label>
+            <input type="text" id="fsubject" placeholder="e.g. Thermodynamics">
+            <span class="error-msg">Please specify a subject.</span>
+          </div>
+          <div class="field-group">
+            <label>🏷️ Resource Type</label>
+            <select id="ftype">
+              <option value="">Select type…</option>
+              <option>📝 Notes</option>
+              <option>📚 Study Materials</option>
+              <option>🎬 Videos</option>
+              <option>🛠️ Tools</option>
+              <option>💡 Other</option>
+            </select>
+            <span class="error-msg">Please select a type.</span>
+          </div>
+        </div>
+        <div class="field-group">
+          <label>📝 Description / Suggestion</label>
+          <textarea id="fdesc" placeholder="Describe what resource you need and why it would help…"></textarea>
+          <span class="error-msg">Please provide a description.</span>
+        </div>
+        <button class="submit-btn ink-btn" onclick="submitForm()">✈️ Submit Request</button>
+      </div>
+      <div class="success-msg" id="successMsg">
+        <div class="success-icon">🎉</div>
+        <h3>Request Submitted!</h3>
+        <p>Thanks for your suggestion! We'll review it and add the resource soon.</p>
+        <button class="btn-fun ink-btn" style="margin-top:24px;display:inline-block" onclick="resetForm()"><span>🔁 Submit Another</span></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ─────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="nav-logo" style="margin-bottom:6px">
+        <div class="logo-icon" style="width:28px;height:28px;font-size:0.9rem">🎓</div>
+        StudyNest
+      </div>
+      <p>Your all-in-one student hub. Built for college students, by college students. Keep grinding! 🔥</p>
+      <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+        <span style="font-size:0.72rem;padding:4px 10px;background:var(--surface2);border:1.5px solid var(--border);border-radius:100px;color:var(--text-muted)">📖 Resources</span>
+        <span style="font-size:0.72rem;padding:4px 10px;background:var(--surface2);border:1.5px solid var(--border);border-radius:100px;color:var(--text-muted)">🧮 GPA Calc</span>
+        <span style="font-size:0.72rem;padding:4px 10px;background:var(--surface2);border:1.5px solid var(--border);border-radius:100px;color:var(--text-muted)">⏱️ Timer</span>
+        <span style="font-size:0.72rem;padding:4px 10px;background:var(--surface2);border:1.5px solid var(--border);border-radius:100px;color:var(--text-muted)">🌙 Dark Mode</span>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>📖 Resources</h4>
+      <a href="#resources">📄 Study Materials</a>
+      <a href="#resources">🗒️ Subject Notes</a>
+      <a href="#resources">🌐 Platforms</a>
+    </div>
+    <div class="footer-col">
+      <h4>🔧 Tools</h4>
+      <a href="#" onclick="openModal('gpaModal')">🧮 GPA Calculator</a>
+      <a href="#" onclick="openModal('ttModal')">📅 Timetable</a>
+      <a href="#" onclick="openModal('timerModal')">⏱️ Pomodoro Timer</a>
+    </div>
+    <div class="footer-col">
+      <h4>📡 Connect</h4>
+      <a href="#request">✈️ Request Resource</a>
+      <a href="#">💻 GitHub</a>
+      <a href="#">💬 Discord Community</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 StudyNest. Made with ❤️ for students. Keep crushing it! 🚀</span>
+    <div class="social-links">
+      <a class="social-btn" href="#" title="GitHub">GH</a>
+      <a class="social-btn" href="#" title="Twitter">𝕏</a>
+      <a class="social-btn" href="#" title="Discord">DC</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════════════════ -->
+<script>
+/* ── Theme ─────────────────────────────────────────── */
+const html = document.documentElement;
+const savedTheme = localStorage.getItem('sn-theme') || 'light';
+html.setAttribute('data-theme', savedTheme);
+document.getElementById('themeIcon').textContent = savedTheme==='dark'?'☀️':'🌙';
+
+document.getElementById('themeToggle').addEventListener('click', ()=>{
+  const cur = html.getAttribute('data-theme');
+  const next = cur==='dark'?'light':'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('sn-theme', next);
+  document.getElementById('themeIcon').textContent = next==='dark'?'☀️':'🌙';
+  burstConfetti(window.innerWidth/2, 80);
+});
+
+/* ── Mobile Menu ───────────────────────────────────── */
+document.getElementById('menuToggle').addEventListener('click',()=>{
+  document.getElementById('mobileMenu').classList.toggle('open');
+});
+function closeMobileMenu(){document.getElementById('mobileMenu').classList.remove('open')}
+
+/* ── Ticker ────────────────────────────────────────── */
+const quotes = [
+  '🔥 Believe in yourself and your study grind!',
+  '💡 One page at a time — you\'ve got this!',
+  '⚡ Small steps every day = big results',
+  '🧠 Your brain is a muscle — keep training it!',
+  '🎯 Focused today, successful tomorrow',
+  '🚀 Progress > Perfection. Keep moving!',
+  '✨ Every expert was once a beginner',
+  '💪 Hard work beats talent when talent doesn\'t work hard',
+  '📖 Reading is a superpower — use it!',
+  '🌟 You\'re closer to the finish line than you think',
+];
+const tickerInner = document.getElementById('tickerInner');
+const tickerContent = [...quotes,...quotes].map(q=>`<span>${q}</span><span class="ticker-dot"></span>`).join('');
+tickerInner.innerHTML = tickerContent;
+
+/* ── Motivational Quote ────────────────────────────── */
+const dailyQuotes = [
+  '"The secret of getting ahead is getting started." — Mark Twain',
+  '"It always seems impossible until it\'s done." — Nelson Mandela',
+  '"You don\'t have to be great to start, but you have to start to be great."',
+  '"Dream big. Work hard. Stay focused."',
+  '"Study hard, dream big, and never give up!"',
+];
+document.getElementById('quoteEl').textContent = dailyQuotes[new Date().getDay() % dailyQuotes.length];
+
+/* ── Animated counters ─────────────────────────────── */
+function animateCounter(el, target, suffix='') {
+  let current = 0;
+  const step = target / 50;
+  const timer = setInterval(()=>{
+    current = Math.min(current + step, target);
+    el.textContent = Math.floor(current) + suffix;
+    if(current >= target) clearInterval(timer);
+  }, 30);
+}
+setTimeout(()=>{
+  animateCounter(document.getElementById('counterRes'), 200, '+');
+  animateCounter(document.getElementById('counterSub'), 15, '+');
+  animateCounter(document.getElementById('counterTools'), 5);
+}, 600);
+
+/* ── Search ────────────────────────────────────────── */
+document.getElementById('searchInput').addEventListener('input', function(){
+  const q = this.value.toLowerCase().trim();
+  document.querySelectorAll('.res-card').forEach(card=>{
+    const kw = card.dataset.keywords || '';
+    const text = card.innerText.toLowerCase();
+    card.style.display = (!q || text.includes(q) || kw.includes(q)) ? '' : 'none';
+  });
+});
+
+/* ── Tabs ──────────────────────────────────────────── */
+function switchTab(id){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+  const r = event.target.getBoundingClientRect();
+  burstPageTurn(r.left+r.width/2, r.top+r.height/2);
+  gainXP(10);
+}
+
+/* ── Modals ────────────────────────────────────────── */
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+function closeModalOutside(e,id){if(e.target.id===id)closeModal(id)}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));
+});
+
+/* ── GPA ───────────────────────────────────────────── */
+const gradeMap={'A+':4.0,'A':4.0,'A-':3.7,'B+':3.3,'B':3.0,'B-':2.7,'C+':2.3,'C':2.0,'C-':1.7,'D+':1.3,'D':1.0,'F':0.0};
+const grades=['A+','A','A-','B+','B','B-','C+','C','C-','D+','D','F'];
+
+function addGPARow(){
+  const list = document.getElementById('gpaCourseList');
+  const row = document.createElement('div');
+  row.className='gpa-row';
+  row.innerHTML=`
+    <input type="text" placeholder="Course name">
+    <select>${grades.map(g=>`<option>${g}</option>`).join('')}</select>
+    <input type="number" min="1" max="6" value="3" placeholder="Credits">
+    <button class="gpa-del" onclick="this.closest('.gpa-row').remove()">✕</button>
+  `;
+  list.appendChild(row);
+  row.querySelector('input').focus();
+}
+
+function calcGPA(){
+  const rows = document.querySelectorAll('.gpa-row');
+  let totalPoints=0, totalCredits=0;
+  rows.forEach(row=>{
+    const grade = row.querySelectorAll('select')[0]?.value;
+    const credits = parseFloat(row.querySelectorAll('input')[1]?.value)||0;
+    const pts = gradeMap[grade]??0;
+    totalPoints += pts*credits;
+    totalCredits += credits;
+  });
+  const gpa = totalCredits?(totalPoints/totalCredits).toFixed(2):'0.00';
+  document.getElementById('gpaNum').textContent=gpa;
+  const g=parseFloat(gpa);
+  let label='Semester GPA';
+  if(g>=3.7){label="🎉 Excellent — Dean's List!";burstConfetti(window.innerWidth/2,window.innerHeight/2)}
+  else if(g>=3.0) label='👍 Great job — Good Standing!';
+  else if(g>=2.0) label='✔ Satisfactory — Keep improving!';
+  else label='⚠ Needs Improvement — You can do it!';
+  document.getElementById('gpaLabel').textContent=label;
+  document.getElementById('gpaResult').style.display='block';
+  gainXP(25);
+}
+
+['Mathematics','Physics','English'].forEach(n=>{
+  addGPARow();
+  const rows=document.querySelectorAll('.gpa-row');
+  rows[rows.length-1].querySelector('input').value=n;
+});
+
+/* ── Timetable ─────────────────────────────────────── */
+const days=['Mon','Tue','Wed','Thu','Fri','Sat'];
+const slots=['8:00','9:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00'];
+let ttData=JSON.parse(localStorage.getItem('sn-tt')||'null')||{};
+
+function buildTimetable(){
+  const t=document.getElementById('ttTable');
+  let h='<thead><tr><th>Time</th>'+days.map(d=>`<th>${d}</th>`).join('')+'</tr></thead><tbody>';
+  slots.forEach(slot=>{
+    h+=`<tr><td style="font-weight:800;font-size:0.75rem;color:var(--text-muted);padding:8px;white-space:nowrap">${slot}</td>`;
+    days.forEach(day=>{
+      const val=(ttData[slot]&&ttData[slot][day])||'';
+      h+=`<td><textarea class="tt-cell" data-slot="${slot}" data-day="${day}" placeholder="—">${val}</textarea></td>`;
+    });
+    h+='</tr>';
+  });
+  h+='</tbody>';
+  t.innerHTML=h;
+  t.querySelectorAll('.tt-cell').forEach(cell=>{
+    cell.addEventListener('input',()=>{
+      const s=cell.dataset.slot,d=cell.dataset.day;
+      if(!ttData[s])ttData[s]={};
+      ttData[s][d]=cell.value;
+    });
+  });
+}
+function saveTimetable(){
+  localStorage.setItem('sn-tt',JSON.stringify(ttData));
+  const btn=event.target;
+  btn.textContent='✅ Saved!';
+  btn.style.background='var(--a3)';
+  setTimeout(()=>{btn.textContent='💾 Save';btn.style.background=''},2000);
+  gainXP(5);
+}
+function clearTimetable(){
+  if(!confirm('Clear all timetable entries?'))return;
+  ttData={};localStorage.removeItem('sn-tt');buildTimetable();
+}
+buildTimetable();
+
+/* ── Pomodoro ──────────────────────────────────────── */
+let timerInterval=null,timerSeconds=25*60,timerRunning=false,totalSeconds=25*60,sessions=0;
+const modes={pomodoro:[25*60,'🧠 Focus Time'],short:[5*60,'☕ Short Break'],long:[15*60,'🛋️ Long Break']};
+
+function setTimerMode(mode,btn){
+  document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  clearInterval(timerInterval);timerRunning=false;
+  [timerSeconds,totalSeconds]=[modes[mode][0],modes[mode][0]];
+  document.getElementById('timerMode').textContent=modes[mode][1];
+  document.getElementById('timerStartBtn').textContent='▶ Start';
+  updateTimerDisplay();
+}
+function updateTimerDisplay(){
+  const m=String(Math.floor(timerSeconds/60)).padStart(2,'0');
+  const s=String(timerSeconds%60).padStart(2,'0');
+  document.getElementById('timerDisplay').textContent=`${m}:${s}`;
+  const pct=((totalSeconds-timerSeconds)/totalSeconds)*100;
+  document.getElementById('timerCircle').style.background=
+    `conic-gradient(var(--a1) ${pct}%, rgba(108,71,255,0.08) ${pct}%)`;
+}
+function toggleTimer(){
+  if(timerRunning){
+    clearInterval(timerInterval);timerRunning=false;
+    document.getElementById('timerStartBtn').textContent='▶ Resume';
+  } else {
+    timerRunning=true;
+    document.getElementById('timerStartBtn').textContent='⏸ Pause';
+    timerInterval=setInterval(()=>{
+      timerSeconds--;
+      updateTimerDisplay();
+      if(timerSeconds<=0){
+        clearInterval(timerInterval);timerRunning=false;
+        sessions++;
+        document.getElementById('sessionCount').textContent=sessions;
+        document.getElementById('timerStartBtn').textContent='▶ Start';
+        burstConfetti(window.innerWidth/2,window.innerHeight/2);
+        gainXP(50);
+        setTimeout(()=>alert('⏰ Time\'s up! '+(sessions%4===0?'Great work — take a long break! 🎉':'Take a short break! ☕')),100);
+      }
+    },1000);
+  }
+}
+function resetTimer(){
+  clearInterval(timerInterval);timerRunning=false;timerSeconds=totalSeconds;
+  document.getElementById('timerStartBtn').textContent='▶ Start';
+  updateTimerDisplay();
+}
+
+/* ── Unit Converter ────────────────────────────────── */
+const unitData={
+  length:{units:['Meter','Kilometer','Centimeter','Millimeter','Mile','Foot','Inch','Yard'],
+    toBase:{Meter:1,Kilometer:1000,Centimeter:0.01,Millimeter:0.001,Mile:1609.34,Foot:0.3048,Inch:0.0254,Yard:0.9144}},
+  mass:{units:['Kilogram','Gram','Milligram','Pound','Ounce','Ton'],
+    toBase:{Kilogram:1,Gram:0.001,Milligram:0.000001,Pound:0.453592,Ounce:0.0283495,Ton:1000}},
+  temp:{units:['Celsius','Fahrenheit','Kelvin'],toBase:null},
+  speed:{units:['m/s','km/h','mph','knot'],
+    toBase:{'m/s':1,'km/h':0.277778,'mph':0.44704,'knot':0.514444}},
+  data:{units:['Byte','Kilobyte','Megabyte','Gigabyte','Terabyte'],
+    toBase:{Byte:1,Kilobyte:1024,Megabyte:1048576,Gigabyte:1073741824,Terabyte:1099511627776}}
+};
+function updateUnits(){
+  const cat=document.getElementById('convCategory').value;
+  const {units}=unitData[cat];
+  ['convFrom','convTo'].forEach((id,i)=>{
+    const sel=document.getElementById(id);
+    sel.innerHTML=units.map(u=>`<option>${u}</option>`).join('');
+    sel.selectedIndex=i;
+  });
+  convert();
+}
+function convert(){
+  const cat=document.getElementById('convCategory').value;
+  const from=document.getElementById('convFrom').value;
+  const to=document.getElementById('convTo').value;
+  const val=parseFloat(document.getElementById('convInput').value);
+  if(isNaN(val)){document.getElementById('convResult').textContent='—';return}
+  let result;
+  if(cat==='temp'){
+    if(from===to)result=val;
+    else if(from==='Celsius'&&to==='Fahrenheit')result=val*9/5+32;
+    else if(from==='Celsius'&&to==='Kelvin')result=val+273.15;
+    else if(from==='Fahrenheit'&&to==='Celsius')result=(val-32)*5/9;
+    else if(from==='Fahrenheit'&&to==='Kelvin')result=(val-32)*5/9+273.15;
+    else if(from==='Kelvin'&&to==='Celsius')result=val-273.15;
+    else if(from==='Kelvin'&&to==='Fahrenheit')result=(val-273.15)*9/5+32;
+    else result=val;
+  } else {
+    const {toBase}=unitData[cat];
+    result=val*(toBase[from]/toBase[to]);
+  }
+  document.getElementById('convResult').textContent=`${result.toPrecision(6)} ${to}`;
+}
+function swapUnits(){
+  const f=document.getElementById('convFrom'),t=document.getElementById('convTo');
+  const tmp=f.value;f.value=t.value;t.value=tmp;convert();
+}
+updateUnits();
+
+/* ── Quick Notes ───────────────────────────────────── */
+const notesArea=document.getElementById('quickNotesArea');
+const notesMeta=document.getElementById('notesMeta');
+notesArea.value=localStorage.getItem('sn-notes')||'';
+updateNotesMeta();
+notesArea.addEventListener('input',()=>{
+  localStorage.setItem('sn-notes',notesArea.value);
+  updateNotesMeta();
+});
+function updateNotesMeta(){
+  const words=notesArea.value.trim().split(/\s+/).filter(Boolean).length;
+  notesMeta.textContent=`${notesArea.value.length} chars · ${words} words · ✅ Auto-saved`;
+}
+function copyNotes(){
+  navigator.clipboard.writeText(notesArea.value);
+  const btn=event.target;btn.textContent='✅ Copied!';
+  setTimeout(()=>{btn.textContent='📋 Copy'},1500);
+}
+function clearNotes(){
+  if(confirm('Clear all notes?')){notesArea.value='';localStorage.removeItem('sn-notes');updateNotesMeta()}
+}
+
+/* ── Form ──────────────────────────────────────────── */
+function validateField(id,check){
+  const el=document.getElementById(id);
+  const grp=el.closest('.field-group');
+  const ok=check(el.value.trim());
+  grp.classList.toggle('has-error',!ok);
+  return ok;
+}
+function submitForm(){
+  const ok1=validateField('fname',v=>v.length>=2);
+  const ok2=validateField('femail',v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v));
+  const ok3=validateField('fsubject',v=>v.length>=2);
+  const ok4=validateField('ftype',v=>v!=='');
+  const ok5=validateField('fdesc',v=>v.length>=10);
+  if(ok1&&ok2&&ok3&&ok4&&ok5){
+    document.getElementById('requestForm').style.display='none';
+    document.getElementById('successMsg').style.display='block';
+    burstConfetti(window.innerWidth/2,window.innerHeight/3);
+    gainXP(30);
+  }
+}
+function resetForm(){
+  document.getElementById('requestForm').style.display='block';
+  document.getElementById('successMsg').style.display='none';
+  ['fname','femail','fsubject','fdesc'].forEach(id=>{
+    document.getElementById(id).value='';
+    document.getElementById(id).closest('.field-group').classList.remove('has-error');
+  });
+  document.getElementById('ftype').selectedIndex=0;
+  document.getElementById('ftype').closest('.field-group').classList.remove('has-error');
+}
+
+/* ── XP System ─────────────────────────────────────── */
+let currentXP = parseInt(localStorage.getItem('sn-xp')||'670');
+function gainXP(amount){
+  currentXP = Math.min(currentXP + amount, 9999);
+  localStorage.setItem('sn-xp', currentXP);
+  document.getElementById('navXpBadge').textContent = `⚡ ${currentXP} XP`;
+  const fill = document.getElementById('xpBarFill');
+  const pct = Math.min((currentXP % 1000)/10, 100);
+  fill.style.width = pct + '%';
+  showXPPop(amount);
+}
+function showXPPop(amount){
+  const el = document.createElement('div');
+  el.style.cssText=`position:fixed;z-index:9999;font-family:Nunito,sans-serif;font-weight:900;font-size:1.1rem;
+    color:var(--a4);pointer-events:none;text-shadow:0 2px 8px rgba(0,0,0,0.25);
+    top:${80+Math.random()*40}px;left:${window.innerWidth/2-40}px;
+    animation:xpPop 1.4s ease forwards;`;
+  el.textContent = `+${amount} XP ⚡`;
+  document.body.appendChild(el);
+  el.addEventListener('animationend',()=>el.remove());
+}
+const xpPopStyle = document.createElement('style');
+xpPopStyle.textContent=`@keyframes xpPop{0%{opacity:0;transform:translateY(0) scale(0.7)}20%{opacity:1;transform:translateY(-20px) scale(1.15)}80%{opacity:1;transform:translateY(-60px) scale(1)}100%{opacity:0;transform:translateY(-80px) scale(0.9)}}`;
+document.head.appendChild(xpPopStyle);
+
+/* ── Confetti burst ────────────────────────────────── */
+const confColors=['#6c47ff','#ff4d8d','#00c9a7','#ffb547','#4dc8ff','#ff6b35','#a855f7'];
+function burstConfetti(cx,cy,count=60){
+  for(let i=0;i<count;i++){
+    const el=document.createElement('div');
+    el.className='confetti-piece';
+    const angle=Math.random()*Math.PI*2;
+    const dist=80+Math.random()*220;
+    el.style.cssText=`
+      left:${cx}px;top:${cy}px;
+      background:${confColors[Math.floor(Math.random()*confColors.length)]};
+      border-radius:${Math.random()>0.5?'50%':'2px'};
+      width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;
+      --dx:${Math.cos(angle)*dist}px;
+      --dy:${Math.sin(angle)*dist+100}px;
+      --dr:${(Math.random()-0.5)*720}deg;
+      --dur:${0.8+Math.random()*0.8}s;
+      animation-delay:${Math.random()*0.2}s;
+    `;
+    document.body.appendChild(el);
+    el.addEventListener('animationend',()=>el.remove());
+  }
+}
+
+/* ── Sparkle cursor trail ──────────────────────────── */
+const cursorGlow=document.getElementById('cursorGlow');
+let cx2=0,cy2=0,gx=0,gy=0,lastSpark=0;
+const sparkColors=['#6c47ff','#ff4d8d','#00c9a7','#ffb547','#4dc8ff'];
+document.addEventListener('mousemove',e=>{
+  cx2=e.clientX;cy2=e.clientY;
+  const now=Date.now();
+  if(now-lastSpark>55){lastSpark=now;spawnSpark(cx2,cy2)}
+});
+function spawnSpark(x,y){
+  const el=document.createElement('div');
+  el.className='spark';
+  const color=sparkColors[Math.floor(Math.random()*sparkColors.length)];
+  const size=4+Math.random()*6;
+  el.style.cssText=`left:${x}px;top:${y}px;background:${color};width:${size}px;height:${size}px;
+    --dx:${(Math.random()-0.5)*70}px;--dy:${(Math.random()-0.5)*70-15}px;
+    border-radius:50%;`;
+  document.body.appendChild(el);
+  el.addEventListener('animationend',()=>el.remove());
+}
+(function moveCursor(){
+  gx+=(cx2-gx)*0.12;gy+=(cy2-gy)*0.12;
+  cursorGlow.style.left=gx+'px';cursorGlow.style.top=gy+'px';
+  requestAnimationFrame(moveCursor);
+})();
+document.querySelectorAll('button,a,.res-card,.tool-card,input,select,textarea').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{
+    cursorGlow.style.width='58px';cursorGlow.style.height='58px';
+    cursorGlow.style.borderColor='rgba(255,77,141,0.6)';
+  });
+  el.addEventListener('mouseleave',()=>{
+    cursorGlow.style.width='40px';cursorGlow.style.height='40px';
+    cursorGlow.style.borderColor='rgba(108,71,255,0.45)';
+  });
+});
+
+/* ── Click ripple ──────────────────────────────────── */
+function spawnRipple(x,y){
+  const el=document.createElement('div');
+  el.className='ripple-ring';
+  el.style.cssText=`left:${x}px;top:${y}px;width:80px;height:80px;`;
+  document.body.appendChild(el);
+  el.addEventListener('animationend',()=>el.remove());
+}
+document.addEventListener('click',e=>spawnRipple(e.clientX,e.clientY));
+document.addEventListener('touchstart',e=>{
+  Array.from(e.touches).forEach(t=>{
+    spawnRipple(t.clientX,t.clientY);
+    spawnSpark(t.clientX,t.clientY);
+  });
+},{passive:true});
+
+/* ── Ink buttons ───────────────────────────────────── */
+document.querySelectorAll('.ink-btn').forEach(btn=>{
+  btn.addEventListener('click',function(e){
+    const rect=this.getBoundingClientRect();
+    const drop=document.createElement('div');
+    drop.className='ink-drop';
+    const size=Math.max(rect.width,rect.height)*0.7;
+    drop.style.cssText=`left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px;width:${size}px;height:${size}px;`;
+    this.appendChild(drop);
+    drop.addEventListener('animationend',()=>drop.remove());
+  });
+});
+
+/* ── Magnetic 3D card tilt ─────────────────────────── */
+document.querySelectorAll('.res-card,.tool-card').forEach(card=>{
+  card.addEventListener('mousemove',function(e){
+    const rect=this.getBoundingClientRect();
+    const mx=(e.clientX-rect.left)/rect.width-0.5;
+    const my=(e.clientY-rect.top)/rect.height-0.5;
+    this.style.transform=`translateY(-10px) rotateY(${mx*10}deg) rotateX(${-my*10}deg) scale(1.02)`;
+  });
+  card.addEventListener('mouseleave',function(){
+    this.style.transform='';
+    this.style.transition='transform 0.45s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease';
+  });
+  card.addEventListener('mouseenter',function(){
+    this.style.transition='transform 0.08s ease, box-shadow 0.25s ease';
+  });
+});
+
+/* ── Tool card glow follow ─────────────────────────── */
+function toolCardGlow(e,card){
+  const rect=card.getBoundingClientRect();
+  const x=((e.clientX-rect.left)/rect.width)*100;
+  const y=((e.clientY-rect.top)/rect.height)*100;
+  card.style.setProperty('--mx',x+'%');
+  card.style.setProperty('--my',y+'%');
+}
+
+/* ── Page particle burst ───────────────────────────── */
+function burstPageTurn(x,y){
+  const emojis=['📄','✏️','📝','📖','⭐','🎯','💡','🔥'];
+  for(let i=0;i<10;i++){
+    const el=document.createElement('div');
+    el.className='page-particle';
+    const angle=(Math.PI*2/10)*i;
+    const dist=70+Math.random()*90;
+    el.style.setProperty('--px',`${Math.cos(angle)*dist}px`);
+    el.style.setProperty('--py',`${Math.sin(angle)*dist-50}px`);
+    el.style.setProperty('--pr',`${(Math.random()-0.5)*360}deg`);
+    el.style.setProperty('--dur',`${0.5+Math.random()*0.5}s`);
+    el.style.left=x+'px';el.style.top=y+'px';
+    el.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    el.style.fontSize='16px';
+    document.body.appendChild(el);
+    el.addEventListener('animationend',()=>el.remove());
+  }
+}
+
+/* ── Scroll reveal ─────────────────────────────────── */
+const revealObserver=new IntersectionObserver((entries)=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){
+      setTimeout(()=>e.target.classList.add('visible'), i*60);
+      revealObserver.unobserve(e.target);
+    }
+  });
+},{threshold:0.1});
+document.querySelectorAll('.scroll-reveal').forEach(el=>revealObserver.observe(el));
+
+/* ── Card stagger on scroll ────────────────────────── */
+const cardObs=new IntersectionObserver((entries)=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){
+      setTimeout(()=>{
+        e.target.style.opacity='1';
+        e.target.style.transform='translateY(0)';
+      }, i*80);
+      cardObs.unobserve(e.target);
+    }
+  });
+},{threshold:0.08});
+document.querySelectorAll('.res-card,.tool-card').forEach(card=>{
+  card.style.opacity='0';
+  card.style.transform='translateY(32px)';
+  card.style.transition='opacity .5s ease, transform .6s cubic-bezier(0.34,1.56,0.64,1)';
+  cardObs.observe(card);
+});
+
+/* ── XP on resource open ───────────────────────────── */
+document.querySelectorAll('.view-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>gainXP(5));
+});
+document.querySelectorAll('.tool-card').forEach(card=>{
+  card.addEventListener('click',e=>{
+    spawnRipple(e.clientX,e.clientY);
+    burstPageTurn(e.clientX,e.clientY);
+    gainXP(15);
+  });
+});
+
+</script>
+</body>
+</html>
